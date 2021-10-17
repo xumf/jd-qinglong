@@ -59,7 +59,7 @@ docker rmi -f rubyangxg/jd-qinglong:arm
 if [ ! -f "$HOME/jd-qinglong-1.0.jar" ];then
   cd ..
   git pull
-  mvn clean package -Dmaven.test.skip=true
+  mvn clean package -Parm -Dmaven.test.skip=true -f pom-os.xml
   cp target/jd-qinglong-*.jar $HOME
   cd $HOME || exit
 else
