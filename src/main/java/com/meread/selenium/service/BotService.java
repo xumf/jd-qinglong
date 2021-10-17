@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.meread.selenium.bean.*;
 import com.meread.selenium.util.CommonAttributes;
+import com.meread.selenium.ws.qqbot.QQAiFlow;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -13,9 +14,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static com.meread.selenium.service.JDService.strSpecialFilter;
 import static com.meread.selenium.util.CommonAttributes.webSocketSession;
@@ -36,6 +35,8 @@ public class BotService {
 
     @Autowired
     private JDService jdService;
+
+    private Map<Long, QQAiFlow> qqAiFlowMap = new HashMap<>();
 
     public void doSendSMS(long senderQQ, String phone) {
         WebSocketSession webSocketSession = CommonAttributes.webSocketSession;
@@ -246,7 +247,7 @@ public class BotService {
                 + "(网页占用：" + statClient.getWebSessionCount() + "，QQBot占用：" + statClient.getQqSessionCount() + ")";
     }
 
-    private void sendMsgWithRetry(long senderQQ, String content) {
+    public void sendMsgWithRetry(long senderQQ, String content) {
         int retry = 0;
         while (retry++ <= 3) {
             try {
@@ -281,5 +282,9 @@ public class BotService {
             }
             sendMsgWithRetry(senderQQ, getQLStatus(true));
         }
+    }
+
+    public Map<Long, QQAiFlow> getQqAiFlowMap() {
+        return qqAiFlowMap;
     }
 }
