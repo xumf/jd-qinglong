@@ -1,8 +1,20 @@
 #!/bin/bash
 set -e
 detect_macos() {
-    [[ $(uname -s) == Darwin ]] && is_macos=1 || is_macos=0
+  [[ $(uname -s) == Darwin ]] && is_macos=1 || is_macos=0
 }
+
+case $(uname -m) in
+x86_64) is_x86=1 ;;
+aarch64) is_x86=0 ;;
+esac
+
+profile=linux
+if [ $is_x86 == 1 -a $is_macos == 1 ]; then
+  profile=mac
+elif [ $is_x86 == 0 ]; then
+  profile=arm
+fi
 
 detect_macos
 
@@ -22,7 +34,7 @@ else
   echo "本地构建"
 fi
 
-if [ ! -f "$HOME/notify" ];then
+if [ ! -f "$HOME/notify" ]; then
   rm -rf qinglong && mkdir qinglong
   rm -rf notify
   git clone -b master --depth=1 https://github.com/whyour/qinglong.git
@@ -68,10 +80,10 @@ docker rm -f webapp
 docker rmi -f rubyangxg/jd-qinglong:latest
 docker rmi -f rubyangxg/jd-qinglong:1.3
 
-if [ ! -f "$HOME/jd-qinglong-1.0.jar" ];then
+if [ ! -f "$HOME/jd-qinglong-1.0.jar" ]; then
   cd ..
   git pull
-  mvn clean package -Dmaven.test.skip=true
+  mvn clean package -P$profile -Dmaven.test.skip=true -f pom-os.xml
   cp target/jd-qinglong-*.jar docker-allinone
   cd docker-allinone || exit
 else
