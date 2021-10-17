@@ -4,6 +4,8 @@ detect_macos() {
   [[ $(uname -s) == Darwin ]] && is_macos=1 || is_macos=0
 }
 
+detect_macos
+
 case $(uname -m) in
 x86_64) is_x86=1 ;;
 aarch64) is_x86=0 ;;
@@ -16,7 +18,7 @@ elif [ $is_x86 == 0 ]; then
   profile=arm
 fi
 
-detect_macos
+echo "profile = $profile"
 
 #当前目录
 HOME=$(
