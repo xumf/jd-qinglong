@@ -79,8 +79,8 @@ rm -rf .pkg-cache
 rm -rf qinglong
 
 docker rm -f webapp
-docker rmi -f rubyangxg/jd-qinglong:latest
-docker rmi -f rubyangxg/jd-qinglong:1.3
+#docker rmi -f rubyangxg/jd-qinglong:latest
+docker rmi -f rubyangxg/jd-qinglong:1.4-beta
 
 if [ ! -f "$HOME/jd-qinglong-1.0.jar" ]; then
   cd ..
@@ -92,18 +92,18 @@ else
   echo "jd-qinglong-1.0.jar已存在"
 fi
 
-docker build -t rubyangxg/jd-qinglong:latest --build-arg JAR_FILE=jd-qinglong-1.0.jar .
-docker build -t rubyangxg/jd-qinglong:1.3 --build-arg JAR_FILE=jd-qinglong-1.0.jar .
+#docker build -t rubyangxg/jd-qinglong:latest --build-arg JAR_FILE=jd-qinglong-1.0.jar .
+docker build -t rubyangxg/jd-qinglong:1.4-beta --build-arg JAR_FILE=jd-qinglong-1.0.jar .
 if [[ $op == 'push' ]]; then
   docker login
-  docker push rubyangxg/jd-qinglong:latest
-  docker push rubyangxg/jd-qinglong:1.3
+#  docker push rubyangxg/jd-qinglong:latest
+  docker push rubyangxg/jd-qinglong:1.4-beta
 fi
 
 cd /root/run
-docker stop webapp && docker rm -f webapp && docker rmi rubyangxg/jd-qinglong:1.3
-docker run -d -p 5701:8080 -p 8001:8001 --name=webapp --privileged=true -e "SPRING_PROFILES_ACTIVE=debugremote" -v "$(pwd)"/env.properties:/env.properties:ro -v "$(pwd)"/go-cqhttp:/go-cqhttp rubyangxg/jd-qinglong:1.3
-#docker run -d -p 5701:8080 --name=webapp --privileged=true -v "$(pwd)"/env.properties:/env.properties:ro -v "$(pwd)"/go-cqhttp:/go-cqhttp rubyangxg/jd-qinglong:1.3
+docker stop webapp && docker rm -f webapp && docker rmi rubyangxg/jd-qinglong:1.4-beta
+docker run -d -p 5701:8080 -p 8001:8001 --name=webapp --privileged=true -e "SPRING_PROFILES_ACTIVE=debugremote" -v "$(pwd)"/env.properties:/env.properties:ro -v "$(pwd)"/go-cqhttp:/go-cqhttp rubyangxg/jd-qinglong:1.4-beta
+#docker run -d -p 5701:8080 --name=webapp --privileged=true -v "$(pwd)"/env.properties:/env.properties:ro -v "$(pwd)"/go-cqhttp:/go-cqhttp rubyangxg/jd-qinglong:1.4-beta
 
 #mvn clean package -Dmaven.test.skip=true && docker-compose -f docker-compose-debug.yml --env-file=env.properties  build --no-cache webapp
 #docker-compose -f docker-compose-debug.yml --env-file=env.properties  up -d --no-deps && docker logs -f webapp
